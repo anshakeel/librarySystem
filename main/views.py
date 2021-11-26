@@ -131,9 +131,7 @@ def rentBook(request , id):
                 request, "No Stock Available for this Book",
                 extra_tags='danger')
             return redirect('userDashboard')
-        if bookM.isbn.copy_num != 0:
-            # bookM.copy_num -= 1
-            # bookM.isbn.copy_num = -1
+        if Bobj.copy_num != 0:
             date = request.POST['date']
             copy_num = request.POST['copy_num']
             var = str(date).split(' ')
