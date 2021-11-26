@@ -121,6 +121,8 @@ def userDashboard(request):
 @login_required(login_url="login")
 def rentBook(request , id):
     if request.method == 'POST':
+        date = request.POST['date']
+        copy_num = request.POST['copy_num']
         try:
             Bobj = Copy.objects.filter(isbn_id=id).order_by('-copy_num').first()
             print("checking Stock.....",Bobj.id , Bobj.copy_num)
@@ -131,9 +133,8 @@ def rentBook(request , id):
                 request, "No Stock Available for this Book",
                 extra_tags='danger')
             return redirect('userDashboard')
-        if Bobj.copy_num != 0:
-            date = request.POST['date']
-            copy_num = request.POST['copy_num']
+        if Bobj.copy_num != 0 and Bobj.copy_num >= int(copy_num):
+            
             var = str(date).split(' ')
             print("Main date",var[0])
             rentDate=datetime.today().strftime('%Y-%m-%d')
@@ -141,7 +142,7 @@ def rentBook(request , id):
             returnDate = datetime.strptime(var[0],'%m/%d/%Y').strftime('%Y-%m-%d')
             print(rentDate, returnDate , copy_num)
             readObj = Reader.objects.get(user_id=request.user.id)
-            Bobj.copy_num -=1
+            Bobj.copy_num -=int(copy_num)
             Bobj.save()
             rentObj = Rent(user_id=request.user.id,isbn=Bobj,
                            copy_num=copy_num,rent_date=rentDate,return_date=returnDate)
@@ -168,7 +169,7 @@ def returnBook(request, id ):
     obj = get_object_or_404(Rent , pk = id)
     print(obj.isbn.id)
     copyObj = Copy.objects.get(id = obj.isbn.id)
-    copyObj.copy_num +=1
+    copyObj.copy_num += obj.copy_num
     copyObj.save()
     obj.delete()
     messages.success(
@@ -189,7 +190,7 @@ def stockBooks(request):
     stockDate = datetime.today().strftime('%Y-%m-%d')
     print(copy_num, copies_id , stockDate)
     obj = get_object_or_404(Copy , pk=copies_id)
-    obj.copy_num =int(copy_num)
+    obj.copy_num +=int(copy_num)
     obj.save()
     libb = Librarian.objects.get(user_id=request.user.id)
     ree = Stock(copy_num=copy_num , isbn=obj , user=libb, stock_date = stockDate)
