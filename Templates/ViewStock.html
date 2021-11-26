@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+
+  <meta charset="UTF-8">
+  <title>Welcome Librarian</title>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Library Management System</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li ><a href="{% url 'dashboard' %}">Home</a></li>
+      <li class="active"><a href="{% url 'viewStocks' %}">View Stocks</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="#"><span class="glyphicon glyphicon-user"></span> {{ user.first_name }} {{ user.last_name }}</a></li>
+      <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+    </ul>
+  </div>
+</nav>
+<h1 class="display-3 text-center" >Welcome Librarian</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+       {% for m in messages %}
+<div class="alert alert-{{ m.tags }}" role="alert">
+  {{ m }}
+</div>
+    {% endfor %}
+      <table class="table table-bordered">Updated Stocks
+        <thead>
+          <tr>
+            <th scope="col">Sr. Number</th>
+               <th scope="col">Stock Updated by</th>
+            <th scope="col">Book Name</th>
+            <th scope="col">Author</th>
+            <th scope="col">ISBN</th>
+            <th scope="col">Stock Date</th>
+
+              <th scope="col">Copy Number</th>
+
+          </tr>
+        </thead>
+        <tbody>
+        {% for co in stock  %}
+
+          <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ co.user.user.user_id.first_name }} {{ co.user.user.user_id.last_name }} </td>
+            <td>{{ co.isbn.isbn.title }} </td>
+            <td>{{ co.isbn.isbn.author }}</td>
+            <td>{{ co.isbn.isbn.isbn }}</td>
+            <td>{{ co.stock_date }}
+            </td>
+          <td>{{ co.copy_num }}
+            </td>
+          </tr>
+
+
+
+
+        {% endfor %}
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- partial -->
+
+</body>
+<script>
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove();
+    });
+}, 2000);
+</script>
+
+<script type="text/javascript">
+        $(function() {
+            $('#datetimepicker1').datetimepicker();
+        });
+    </script>
+</html>
