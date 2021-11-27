@@ -144,7 +144,7 @@ def rentBook(request , id):
             readObj = Reader.objects.get(user_id=request.user.id)
             Bobj.copy_num -=int(copy_num)
             Bobj.save()
-            rentObj = Rent(user_id=request.user.id,isbn=Bobj,
+            rentObj = Rent(user_id=readObj.id,isbn=Bobj,
                            copy_num=copy_num,rent_date=rentDate,return_date=returnDate)
             rentObj.save()
             messages.success(
@@ -161,7 +161,9 @@ def rentBook(request , id):
 
 @login_required(login_url="login")
 def myBooks(request):
-    getMyBooks = Rent.objects.filter(user_id=request.user.id)
+    readObj = Reader.objects.get(user_id=request.user.id)
+    getMyBooks = Rent.objects.filter(user_id=readObj)
+    print(getMyBooks)
     return render(request , 'myBooks.html', {'rents': getMyBooks})
 
 @login_required(login_url="login")
@@ -203,5 +205,5 @@ def stockBooks(request):
 
 
 def viewStocks(request):
-    soc = Stock.objects.all().order_by('stock_date')
+    soc = Stock.objects.all().order_by('-stock_date')
     return render(request,'ViewStock.html',{'stock': soc})
